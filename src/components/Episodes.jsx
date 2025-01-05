@@ -6,7 +6,7 @@ const Episodes = ({ id, episodes }) => {
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
-      {/* Toggle Button for Small Screens */}
+     
       <button
         className="sm:hidden absolute top-30 right-4 bg-gray-800 text-blue-700 p-3 rounded-lg z-40 cursor-pointer hover:bg-blue-700 hover:text-white transition duration-300 ease-in-out shadow-md hover:shadow-lg"
         onClick={() => setShowEpisodes(!showEpisodes)}

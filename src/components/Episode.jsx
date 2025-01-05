@@ -2,7 +2,12 @@ import React from 'react';
 import { Link } from "react-router-dom";
 
 const Episode = ({ id, data }) => {
+  const MAX = 70;
   const episode_id = data.mal_id;
+  const title = data.title || "Untitled Episode";
+
+  const paddingLength = MAX - title.length;
+  const paddedTitle = title.padEnd(paddingLength, ' ').replace(/ /g, '\u00A0');
 
   return (
     <Link 
@@ -17,8 +22,8 @@ const Episode = ({ id, data }) => {
       
       {/* Episode Details */}
       <div className="flex-1">
-        <h3 className="text-md font-semibold text-white truncate">{data.title || "Untitled Episode"}</h3>
-        <p className="text-xs text-gray-400">{data.aired || "No airing date available"}</p>
+        <h3 className="text-md font-semibold text-white truncate max-w-xs">{paddedTitle}</h3>
+        <p className="text-xs text-gray-400 truncate max-w-xs">{data.aired || "No airing date available"}</p>
       </div>
     </Link>
   );
