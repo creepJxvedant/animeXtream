@@ -1173,16 +1173,16 @@ video {
   background-color: rgb(255 255 255 / 0.3);
 }
 
+.bg-opacity-30 {
+  --tw-bg-opacity: 0.3;
+}
+
 .bg-opacity-50 {
   --tw-bg-opacity: 0.5;
 }
 
 .bg-opacity-80 {
   --tw-bg-opacity: 0.8;
-}
-
-.bg-opacity-30 {
-  --tw-bg-opacity: 0.3;
 }
 
 .bg-cover {
@@ -1367,10 +1367,6 @@ video {
 
 .no-underline {
   text-decoration-line: none;
-}
-
-.opacity-30 {
-  opacity: 0.3;
 }
 
 .opacity-50 {
