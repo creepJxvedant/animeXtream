@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import {Link} from 'react-router-dom'
 
-function Header() {
+function Header({isHome}) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -8,14 +9,14 @@ function Header() {
     };
 
     return (
-        <header className="bg-gray-900 bg-opacity-30 backdrop-blur-sm p-4 rounded-lg shadow-lg flex justify-between items-center h-20">
-            <div className="flex w-4/12 items-center space-x-4">
+        <header className={`bg-gray-950 p-4 rounded-none shadow-lg flex justify-between bg-opacity-80 items-center h-20 ${isHome ? 'bg-gray-900 bg-opacity-30 rounded-lg backdrop-blur-sm' : ''}`}>
+          <div className="flex w-4/12 items-center space-x-4">
                 <div className="hamburger-menu w-1/2 text-white cursor-pointer" onClick={toggleMenu}>
                     <svg fill="#000000" width="35px" height="35px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2,4A1,1,0,0,1,3,3H21a1,1,0,0,1,0,2H3A1,1,0,0,1,2,4Zm1,9H21a1,1,0,0,0,0-2H3a1,1,0,0,0,0,2Zm0,8H21a1,1,0,0,0,0-2H3a1,1,0,0,0,0,2Z"/>
                     </svg>
                 </div>
-                <div className="logo flex text-white w-1/2" style={{marginRight:"6rem"}}>
+                <Link to={`/`}><div className="logo flex text-white w-1/2" style={{marginRight:"6rem"}}>
                     <svg width="90px" height="90px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <style>{`.a{fill:none;stroke:#0000ff;stroke-linecap:round;stroke-linejoin:round}`}</style>
@@ -34,7 +35,7 @@ function Header() {
                             </g>
                         </g>
                     </svg>
-                </div>
+                </div></Link>
             </div>
 
             <div className="flex items-center space-x-4 w-full md:w-4/12">
