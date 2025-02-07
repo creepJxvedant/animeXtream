@@ -1,8 +1,9 @@
 {
-  "name": "animextream",
+  "name": "animetream",
   "private": false,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://creepJxVedant.github.io/animeXtream",
   "scripts": {
     "dev": "concurrently \"vite\" \"npx tailwindcss -i ./src/tailwind/input.css -o ./src/tailwind/output.css --watch\"",
     "build": "vite build",
