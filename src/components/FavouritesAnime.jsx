@@ -4,11 +4,27 @@ import Card from "./Card";
 function FavouritesAnime() {
   const [Favourites, setFavourites] = useState([]);
 
-  useEffect(() => {
+  const updateFavourites = () => {
     const storedFavourites = localStorage.getItem("favoriteCards");
     if (storedFavourites) {
       setFavourites(JSON.parse(storedFavourites));
     }
+  };
+
+  useEffect(() => {
+    updateFavourites();
+
+    const handleStorageChange = (event) => {
+      if (event.key === "favoriteCards") {
+        updateFavourites();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   if (Favourites.length === 0) {
