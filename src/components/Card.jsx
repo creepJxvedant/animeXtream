@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import CardLoader from "./CardLoader";
+import { Heart } from "lucide-react";
 
 const Card = React.forwardRef(
-  ({ image, rating, id, rank, status, ageTag, title, episodes, genres }, ref) => {
+  (
+    { image, rating, id, rank, status, ageTag, title, episodes, genres },
+    ref
+  ) => {
     const [isVisible, setIsVisible] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
     const cardRef = useRef();
 
     useEffect(() => {
@@ -30,6 +35,38 @@ const Card = React.forwardRef(
       };
     }, []);
 
+    useEffect(() => {
+      const favoriteCards =
+        JSON.parse(localStorage.getItem("favoriteCards")) || [];
+      const isCardFavorite = favoriteCards.some((card) => card.id === id);
+      setIsFavorite(isCardFavorite);
+    }, [id]);
+
+    const handleFavoriteClick = () => {
+      setIsFavorite(!isFavorite);
+      const favoriteCards =
+        JSON.parse(localStorage.getItem("favoriteCards")) || [];
+      if (!isFavorite) {
+        favoriteCards.push({
+          image,
+          rating,
+          id,
+          rank,
+          status,
+          ageTag,
+          title,
+          episodes,
+          genres,
+        });
+      } else {
+        const index = favoriteCards.findIndex((card) => card.id === id);
+        if (index !== -1) {
+          favoriteCards.splice(index, 1);
+        }
+      }
+      localStorage.setItem("favoriteCards", JSON.stringify(favoriteCards));
+    };
+
     if (!isVisible) {
       return (
         <div
@@ -42,8 +79,8 @@ const Card = React.forwardRef(
     }
 
     return (
-      <Link to={`/play/${id}`}>
-        <div ref={ref} className="bg-gray-900 rounded-lg shadow-2xl p-4 max-w-xs text-white">
+      <Link to={`/play/${id}`} ref={ref} className="block">
+        <div className="bg-gray-900 rounded-lg shadow-2xl p-4 max-w-xs text-white relative min-w-[300px]">
           <div className="relative h-56 rounded-lg overflow-hidden">
             <div
               className="absolute inset-0 bg-cover bg-center"
@@ -76,7 +113,9 @@ const Card = React.forwardRef(
 
             <div className="flex items-center justify-between mt-3">
               <div className="flex items-center">
-                <span className="text-yellow-400 text-lg font-bold">{rating}</span>
+                <span className="text-yellow-400 text-lg font-bold">
+                  {rating}
+                </span>
                 <span className="ml-1 text-sm">★</span>
               </div>
               <div className="text-gray-400 text-sm">
@@ -106,6 +145,20 @@ const Card = React.forwardRef(
               </span>
             </div>
           </div>
+
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              handleFavoriteClick();
+            }}
+            className="absolute top-2 right-2 p-2 rounded-full bg-gray-700 "
+            style={{ zIndex: 30 }}
+          >
+            <Heart
+              color={isFavorite ? "red" : "white"}
+              fill={isFavorite ? "red" : "none"}
+            />
+          </button>
         </div>
       </Link>
     );
