@@ -1,76 +1,139 @@
-import React from "react";
+"use client"
+
+import { useState } from "react"
+
+const reactionEmojis = {
+  nice: "👍",
+  love_it: "❤️",
+  funny: "😂",
+  confusing: "🤔",
+  informative: "📚",
+  well_written: "✍️",
+  creative: "🎨",
+}
 
 const Comment = ({ item, index, expanded, toggleExpand }) => {
-  const { reactions } = item;
+  const [isLiked, setIsLiked] = useState(false)
+  const [showReplyForm, setShowReplyForm] = useState(false)
+  const [replyText, setReplyText] = useState("")
 
-  // Define a mapping of reaction types to emojis
-  const reactionEmojis = {
-    nice: "👍",
-    love_it: "❤️",
-    funny: "😂",
-    confusing: "🤔",
-    informative: "📚",
-    well_written: "✍️",
-    creative: "🎨",
-  };
+  const { user = {}, review, date, reactions = {} } = item
+
+  const fallbackAvatar = user.username?.charAt(0)?.toUpperCase() || "?"
+
+  const formatDate = (dateStr) => {
+    const d = new Date(dateStr)
+    const now = new Date()
+    const diff = (now - d) / (1000 * 60 * 60 * 24)
+    if (diff < 1) return "Today"
+    if (Math.floor(diff) === 1) return "Yesterday"
+    if (diff < 7) return `${Math.floor(diff)} days ago`
+    return d.toLocaleDateString()
+  }
 
   return (
-    <div
-      key={item.mal_id}
-      className="p-4 bg-gray-800 border border-gray-700 rounded-lg shadow-sm"
-    >
+    <div className="group bg-gradient-to-br from-slate-800/80 to-slate-900 border border-slate-700 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
       {/* User Info */}
-      <div className="flex items-start space-x-3">
-        <img
-          src={item.user.images?.jpg?.image_url || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z' fill='%23000000'/%3E%3Cpath d='M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z' fill='%23000000'/%3E%3C/svg%3E"}
-          alt={item.user.username}
-          className="w-10 h-10 rounded-full border border-gray-600"
-        />
-        <div className="flex-1">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-yellow-500 font-semibold">
-                {item.user.username}
-              </span>
-              <span className="ml-2 text-gray-400 text-sm">#{index + 1}</span>
-            </div>
-            <span className="text-gray-500 text-sm">
-              {new Date(item.date).toLocaleDateString()}
-            </span>
+      <div className="flex items-start space-x-4 mb-4">
+        {user.images?.jpg?.image_url ? (
+          <img
+            src={user.images.jpg.image_url}
+            alt={user.username}
+            className="w-12 h-12 rounded-full border-2 border-blue-500 object-cover"
+          />
+        ) : (
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-semibold text-lg border-2 border-slate-700">
+            {fallbackAvatar}
           </div>
-          <p className="mt-2 text-gray-300">
-            {expanded ? item.review : `${item.review.slice(0, 100)}...`}
-            <button
-              onClick={() => toggleExpand(index)}
-              className="text-blue-500 ml-2"
-            >
-              {expanded ? "Show less" : "Show more"}
-            </button>
-          </p>
+        )}
+
+        <div className="flex-1">
+          <div className="flex justify-between items-center">
+            <h4 className="text-white font-semibold">{user.username}</h4>
+            <span className="text-xs text-slate-400">#{index + 1}</span>
+          </div>
+          <p className="text-xs text-slate-500">{formatDate(date)}</p>
         </div>
       </div>
+
+      {/* Comment */}
+      <p className="text-slate-300 leading-relaxed mb-2 whitespace-pre-line">
+        {expanded ? review : `${review.slice(0, 150)}...`}
+      </p>
+      {review.length > 150 && (
+        <button
+          onClick={() => toggleExpand(index)}
+          className="text-sm text-blue-400 hover:underline"
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      )}
 
       {/* Reactions */}
-      <div className="mt-4 flex items-center justify-between text-gray-400 text-sm">
-        <div className="flex items-center space-x-4">
-          {Object.entries(reactions).map(([reaction, count]) => (
-            reaction !== "overall" && count > 0 && (
+      <div className="flex justify-between items-center mt-4 flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
+          {Object.entries(reactions).map(([type, count]) =>
+            type !== "overall" && count > 0 && reactionEmojis[type] ? (
               <div
-                key={reaction}
-                className="flex items-center space-x-1 cursor-pointer hover:text-blue-500"
+                key={type}
+                className="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-full text-sm flex items-center gap-1 text-white shadow-sm transition"
               >
-                <span>{reactionEmojis[reaction]}</span>
-                <span>{count}</span>
+                <span>{reactionEmojis[type]}</span>
+                <span className="font-medium">{count}</span>
               </div>
-            )
-          ))}
+            ) : null
+          )}
         </div>
-        <button className="text-blue-500 font-semibold hover:underline">
-          Reply
-        </button>
-      </div>
-    </div>
-  );
-};
 
-export default Comment;
+        <div className="flex gap-4 text-sm text-slate-400">
+          <button
+            onClick={() => setIsLiked(!isLiked)}
+            className={`hover:text-red-400 transition ${
+              isLiked ? "text-red-500" : ""
+            }`}
+          >
+            ❤️ Like
+          </button>
+          <button
+            onClick={() => setShowReplyForm(!showReplyForm)}
+            className="hover:text-blue-400"
+          >
+            💬 Reply
+          </button>
+        </div>
+      </div>
+
+      {/* Reply Box */}
+      {showReplyForm && (
+        <div className="mt-5 animate-in fade-in slide-in-from-top-1 duration-300">
+          <textarea
+            rows={3}
+            maxLength={300}
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder="Write your reply..."
+            className="w-full p-3 rounded-lg bg-slate-700 text-slate-200 border border-slate-600 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+          />
+          <div className="flex justify-end gap-2 mt-3">
+            <button
+              onClick={() => {
+                setShowReplyForm(false)
+                setReplyText("")
+              }}
+              className="text-sm text-slate-400 hover:text-slate-200"
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium"
+            >
+              Reply
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default Comment
